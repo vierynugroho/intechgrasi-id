@@ -1,9 +1,11 @@
+import eslint from '@eslint/js';
+import importsPlugin from 'eslint-plugin-import';
 import globals from 'globals';
 
 export default [
+  eslint.configs.recommended,
   {
     files: ['**/*.js'],
-    extends: ['eslint:recommended', 'plugin:import/recommended'],
     languageOptions: {
       globals: globals.node,
       sourceType: 'module',
@@ -13,7 +15,9 @@ export default [
         sourceType: 'module',
       },
     },
-    plugins: ['import'],
+    plugins: {
+      import: importsPlugin,
+    },
     rules: {
       'no-unused-vars': 'error',
       'import/no-unresolved': 'off',
@@ -21,7 +25,10 @@ export default [
         'error',
         'always',
         {
-          js: 'always',
+          ignorePackages: true,
+          pattern: {
+            js: 'always',
+          },
         },
       ],
     },

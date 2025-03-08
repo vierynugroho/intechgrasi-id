@@ -1,6 +1,5 @@
 import { UserService } from '../services/user.js';
 import SuccessResponse from '../interceptors/toSuccess.js';
-import ErrorResponse from '../interceptors/toError.js';
 
 export class UserController {
   static async getUsers(req, res, next) {

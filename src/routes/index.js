@@ -1,6 +1,6 @@
 import express from 'express';
-import SuccessResponse from '../interceptors/toSuccess.js';
 import userRoutes from './user.js';
+import SuccessResponse from '../interceptors/toSuccess.js';
 const router = express.Router();
 
 router.get('/', (req, res) => {
