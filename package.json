@@ -1,0 +1,60 @@
+{
+  "name": "intechgrasi-id",
+  "version": "1.0.0",
+  "description": "intechgrasi - user interview - viery nugroho",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon .",
+    "prepare": "husky",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "docs:generate": "node src/utils/generate.js",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:db": "npx prisma db push",
+    "prisma:reset": "npx prisma migrate reset",
+    "prisma:seed": "node ./prisma/seeder.js",
+    "prisma:studio": "npx prisma studio"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write",
+      "eslint  --fix",
+      "git add"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "keywords": [
+    "intechgrasi"
+  ],
+  "author": "Viery Nugroho",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcrypt": "^5.1.1",
+    "compression": "^1.8.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "prisma": "^6.4.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0",
+    "eslint-plugin-import": "^2.31.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3"
+  }
+}
