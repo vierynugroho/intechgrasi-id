@@ -18,7 +18,7 @@ const handlePrismaError = (err, res) => {
     P2002: { status: 409, message: 'Duplicate field, constraint violation' },
     P2003: { status: 409, message: 'Key Constraint' },
     P2005: { status: 409, message: 'Resource not found' },
-    default: { status: 500, message: 'Something went wrong' },
+    default: { status: 500, message: 'Database error' },
   };
 
   const { status, message } = errorMap[err.code] || errorMap.default;
@@ -32,7 +32,7 @@ const handleJWTError = (err, res) => {
   if (err instanceof jwt.JsonWebTokenError) {
     message = `${err.message}, please re-login`;
   } else if (err instanceof jwt.NotBeforeError) {
-    message = 'Token not active, please re-login';
+    message = 'Token is not active, please re-login';
   } else if (err instanceof jwt.TokenExpiredError) {
     message = 'Token is expired, please re-login';
   }
@@ -46,11 +46,15 @@ const errorMiddleware = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || 'Internal Server Error';
 
-  if (process.env.NODE_ENV === 'development') {
-    logError(err);
-  }
+  logError(err);
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    return handlePrismaError(err, res);
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    return handlePrismaError(err, res);
+  } else if (err instanceof Prisma.PrismaClientInitializationError) {
+    return handlePrismaError(err, res);
+  } else if (err instanceof Prisma.PrismaClientRustPanicError) {
     return handlePrismaError(err, res);
   }
 
@@ -63,11 +67,16 @@ const errorMiddleware = (err, req, res, next) => {
   }
 
   if (err instanceof ErrorHandler) {
-    const response = ErrorResponse(err.statusCode, err.message, err);
+    const response = ErrorResponse(err.statusCode, 'something went wrong', err);
     return res.status(err.statusCode).json(response);
   }
 
-  const response = ErrorResponse(500, 'Something went wrong', err);
+  if (err instanceof TypeError) {
+    const response = ErrorResponse(err.statusCode, 'type error', err);
+    return res.status(err.statusCode).json(response);
+  }
+
+  const response = ErrorResponse(500, 'something went wrong', err);
   return res.status(500).json(response);
 };
 
